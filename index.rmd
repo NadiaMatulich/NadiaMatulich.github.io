@@ -1,0 +1,389 @@
+---
+title: "RTest1"
+author: "Nadia Matulich"
+format: html
+---
+
+Hello! In my last sample code I placed most of the code in scripts, and have used a project structure (https://github.com/NadiaMatulich/sample_code), and simply printed a document using the code written in scripts.
+
+I understand many people prefer the above, so I present it again as an example of my ability to do so.
+
+For this submission, I have included everything in this one Quarto Document, without the project struc
+
+I prefer coding as below, but I am also aware that it frustrates most, and is better in 
+# Basic Stats
+
+```{r}
+
+library(tidyverse)
+
+```
+
+```{r}
+tag      <- "202311081903"
+base_url <- "https://github.com/randrescastaneda/pub_data/raw/"
+data_url <- paste0(base_url, tag, "/data/Rtest1/")
+
+options(scipen = 999) # to ensure numbers don't print in scientific notation
+
+options(digits=1)
+
+```
+
+
+# Section 1
+
+## Import Data
+
+```{r}
+
+wdi <- readr::read_rds(paste0(data_url, "wdi_in1.Rds"))
+
+```
+
+## Define Commonly Called on Functions
+
+```{r}
+
+weighted_mean <- function(x, weights) {
+  sum(x * weights, na.rm = TRUE) / sum(weights, na.rm = TRUE)
+}
+
+weighted_sd <- function(x, weights) {
+  mean_value <- weighted_mean(x, weights)
+  sqrt(sum(weights * (x - mean_value)^2, na.rm = TRUE) / sum(weights, na.rm = TRUE))
+}
+
+```
+
+## Summary Statistics of GDP per Capita by Region
+
+### Functions
+
+```{r}
+# Cannot figure out why I get 44 observations in SSA here instead of 42
+
+summary<- function(data,x,weights){
+  
+  summary <- 
+    data %>%
+    group_by(date, region) %>%
+    summarise(
+      n = n(),
+      mean = weighted_mean(.data[[x]], .data[[weights]]),
+      sd = weighted_sd(.data[[x]], .data[[weights]]),
+      median = median(.data[[x]], .data[[weights]], na.rm = TRUE),
+      min = min(.data[[x]], na.rm = TRUE), #no extra steps for weighting as per capita already considers pop size
+      max = max(.data[[x]], na.rm = TRUE) # weighting not performed, as with min
+    ) %>%
+    arrange(region, date)
+  
+  summary
+  
+}
+
+```
+
+### Printing Results
+
+```{r}
+
+summary(data= wdi %>% 
+          select(region, date, country, gdp, pop),
+        x="gdp",
+        weights="pop")
+
+```
+
+
+## Question 2
+
+### Functions
+
+```{r}
+
+aggregating_statistics <- function(data, x, weights) {
+  
+results <- data %>%
+    group_by(date, region) %>%
+    summarise(
+      mean = weighted_mean(.data[[x]], .data[[weights]]),
+      sd = weighted_sd(.data[[x]], .data[[weights]]),
+      median = median(.data[[x]], .data[[weights]], na.rm = TRUE),
+      min = min(.data[[x]], na.rm = TRUE),
+      max = max(.data[[x]], na.rm = TRUE)
+    ) %>%
+    arrange(region, date) %>%
+    pivot_longer(
+      cols = starts_with(c("mean", "sd", "median", "min", "max")),
+      names_to = "statistic",
+      values_to = "value"
+    ) 
+
+results
+
+}
+
+```
+
+
+```{r}
+
+collating_table <- function(data, variables) {
+  
+results_list <- list()
+
+pop<-
+    data %>% 
+    group_by(region,date) %>% 
+    summarise(pop=sum(pop))
+  
+  for (variable in variables) {
+    results_list[[variable]] <- aggregating_statistics(data, x = variable, weights = "pop")
+  }
+
+result_table <- 
+  bind_rows(results_list, .id = "variable") %>% 
+  left_join(pop, by=c("region","date")) %>% 
+  pivot_wider(names_from = variable, values_from = value) %>% 
+  select(statistic,region,date,pop,lifeex,gdp,pov_intl)
+
+result_table
+
+}
+
+```
+
+### Printing Results
+
+```{r}
+
+options(digits=5)
+
+collating_table(data= wdi %>% 
+                  select(region, date, iso3c, lifeex, pov_intl, gdp, pop), 
+                variables= c("gdp", "lifeex", "pov_intl")) 
+  
+
+```
+# Finding Outliers
+
+
+
+# Poverty Measures
+
+## Reading in Data
+
+```{r}
+
+data <- readr::read_rds(paste0(data_url, "svy_sim_in1.Rds")) %>% 
+  bind_rows(.id = "year") %>% 
+  mutate(year = as.numeric(substring(year, 2)))
+
+```
+## Question 1
+
+### Key Functions
+
+```{r}
+
+measuring_poverty<-function(x){
+
+measuring_poverty<-data %>% 
+  mutate(poor=ifelse(income<=x,1,0)) %>% 
+  group_by(year) %>% 
+  summarise(pov_line=x,
+            headcount=sum(poor*weight)/sum(weight),
+            povgap=(sum(ifelse(income<=x,((x-income)/x)*weight,0)))/sum(weight),
+            povseverity=(sum(ifelse(income<=x,(((x-income)/x)^2)*weight,0)))/sum(weight),
+            )
+
+measuring_poverty
+
+}
+```
+
+### Printing Results
+
+```{r}
+
+poverty_levels <- c(2.15, 3.65, 6.85)
+
+poverty_measures <- data.frame()
+
+for (level in poverty_levels) {
+  result <- measuring_poverty(level)
+  poverty_measures<- bind_rows(poverty_measures, result)
+}
+
+poverty_measures
+
+```
+
+### Graphing Results
+
+```{r}
+
+poverty_measures %>% 
+  mutate(year = as.Date(paste0(year, "-01-01")),
+         pov_line=factor(pov_line)) %>% 
+  ggplot() +
+  geom_point(aes(x=year,y=headcount,colour=pov_line))+
+  geom_line(aes(x=year,y=headcount,colour=pov_line))+
+  labs(x="Year",
+       y="Head Count")+
+  theme_minimal()+
+  scale_colour_manual(values=c("#00193a", "#002b60", "#66a3ff"))+
+  theme(legend.position="bottom", legend.title=element_blank())
+
+```
+## Question 2
+
+```{r}
+# Hello! Here's my attempt. I'm really not familiar enough with Lorenz curves at this point in time, I think the maths is right, as my gini co-efficients work out at the end
+
+# But I know I am missing something with the 100 points
+
+# I don't think I understand the question well enough (I've clearly got too many rows- I think the 100 points bit is meant to be faster computationally?)
+
+# is there like a "randomly sample 100 points in each year and then calculate the curves" idea here to speed it up?
+
+
+# code runs slow here because of the above
+
+# Please see attempt below.
+```
+
+### Functions
+
+```{r}
+
+lorenz<-function(){
+
+lorenz <-data%>% 
+  group_by(year) %>%
+  arrange(income) %>% 
+  mutate(cum_income=cumsum(income*weight)/sum(income*weight),
+         cum_population=cumsum(weight)/sum(weight)) 
+
+lorenz
+
+}
+
+```
+
+### Printing Results
+
+```{r}
+
+lorenz()
+
+```
+
+### Graphing Results
+
+```{r}
+
+lorenz() %>% 
+  ggplot() +
+  geom_line(aes(x = cum_population, 
+                y = cum_income, 
+                group = year, 
+                color = as.factor(year))) +
+  labs(x="Cumulative Welfare",
+       y="Cumulative Population")+
+  theme_minimal()+
+  theme(legend.position=c(0.10,0.60), 
+        legend.title=element_blank())
+
+
+```
+## Question 2 (Alternative)
+
+### Functions
+
+```{r}
+# Using a sample of 100 points would be as follows, but I don't think this is what you are looking for
+
+set.seed=(123)
+
+lorenz_2<-function(){
+
+sample_data <- data %>%
+  group_by(year) %>%
+  slice_sample(n = 100, replace = FALSE)
+    
+lorenz <-sample_data%>% 
+  group_by(year) %>%
+  arrange(income) %>% 
+  mutate(cum_income=cumsum(income*weight)/sum(income*weight),
+         cum_population=cumsum(weight)/sum(weight)) %>% 
+  arrange(cum_population)
+
+lorenz
+
+}
+
+```
+
+### Printing Results
+
+```{r}
+
+lorenz_2()
+
+```
+
+### Graphing Results
+
+```{r}
+
+lorenz_2() %>% 
+  ggplot() +
+  geom_line(aes(x = cum_population, 
+                y = cum_income, 
+                group = year, 
+                color = as.factor(year))) +
+  theme_minimal()+
+  theme(legend.position=c(0.10,0.60), 
+        legend.title=element_blank())
+
+```
+
+## Question 3 
+
+### Functions 
+
+```{r}
+
+gini<-function(){
+
+gini_coefficient <- lorenz() %>%
+  group_by(year) %>% 
+  summarise(gini = 1 - 2 * integrate(Vectorize(approxfun(cum_population, cum_income)), 0, 1)$value) 
+
+gini_coefficient
+
+}
+
+```
+
+### Printing Results
+
+```{r}
+
+gini()
+
+```
+
+### Graphing Results
+
+```{r}
+
+gini() %>% 
+  ggplot(aes(x=year,y=gini))+
+  geom_line()+
+  geom_point()+
+  theme_minimal()
+
+```
