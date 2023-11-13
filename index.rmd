@@ -1,21 +1,19 @@
 ---
-title: "RTest1"
+title: "R Skills Assignment"
 author: "Nadia Matulich"
 format: html
 ---
 
-Hello! In my last sample code I placed most of the code in scripts, and have used a project structure (https://github.com/NadiaMatulich/sample_code), and simply printed a document using the code written in scripts.
-
-I understand many people prefer the above, so I present it again as an example of my ability to do so.
-
-For this submission, I have included everything in this one Quarto Document, without the project struc
-
-I prefer coding as below, but I am also aware that it frustrates most, and is better in 
-# Basic Stats
-
 ```{r}
 
 library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(DT)
+
+
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.align="left", fig.pos="H", digits=2)
+
 
 ```
 
@@ -30,8 +28,7 @@ options(digits=1)
 
 ```
 
-
-# Section 1
+# Basic Statistics
 
 ## Import Data
 
@@ -91,7 +88,10 @@ summary<- function(data,x,weights){
 summary(data= wdi %>% 
           select(region, date, country, gdp, pop),
         x="gdp",
-        weights="pop")
+        weights="pop") %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
 
 ```
 
@@ -126,7 +126,6 @@ results
 
 ```
 
-
 ```{r}
 
 collating_table <- function(data, variables) {
@@ -145,8 +144,7 @@ pop<-
 result_table <- 
   bind_rows(results_list, .id = "variable") %>% 
   left_join(pop, by=c("region","date")) %>% 
-  pivot_wider(names_from = variable, values_from = value) %>% 
-  select(statistic,region,date,pop,lifeex,gdp,pov_intl)
+  pivot_wider(names_from = variable, values_from = value) 
 
 result_table
 
@@ -162,13 +160,71 @@ options(digits=5)
 
 collating_table(data= wdi %>% 
                   select(region, date, iso3c, lifeex, pov_intl, gdp, pop), 
-                variables= c("gdp", "lifeex", "pov_intl")) 
+                variables= c("gdp", "lifeex", "pov_intl")) %>% 
+  select(statistic,region,date,pop,lifeex,gdp,pov_intl) %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
   
 
 ```
-# Finding Outliers
+
+## Question 3 Finding Outliers
+
+This one threw me for a loop for some reason, and when I tried to use Q2, it just wouldn't work out. 
+
+There is an error here somewhere, but please see my proposed solution below:
+
+### Functions
+```{r}
+outliers<-function(){
+ 
+outliers<-wdi %>% 
+  select(date,region,country,gdp,pop,lifeex,gini) %>% 
+  pivot_longer(cols = c("gdp", "lifeex", "gini"),
+      names_to = "indicator",
+      values_to = "value") %>% 
+  group_by(date,region,indicator) %>% 
+  mutate(mean=weighted_mean(value,pop),
+         sd=weighted_sd(value,pop),
+         upper=mean+2.5*(sd),
+         lower=mean-2.5*(sd),
+         outlier=ifelse(value<=upper,
+                (ifelse(indicator<=lower,"outlier","inlier")),"outlier"))
+outliers
+
+}
+```
+
+### Printing Results
+
+```{r}
+outliers() %>% 
+  filter(outlier=="outlier") %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE)
+```
+
+### Printing Graph
+
+```{r}
+
+outliers() %>% 
+  filter(indicator=="lifeex") %>% 
+  ggplot()+
+  geom_ribbon(aes(x=date,
+                  ymin=mean-2.5*(sd),
+                  ymax=mean+2.5*(sd), 
+                  xmin=first(date),
+                  xmax=last(date)), 
+              colour="grey", alpha=0.3)+
+  geom_point(aes(x=date,y=value,color=region))+
+  geom_line(aes(x=date, y=mean))+
+  theme_minimal()
 
 
+```
 
 # Poverty Measures
 
@@ -181,7 +237,8 @@ data <- readr::read_rds(paste0(data_url, "svy_sim_in1.Rds")) %>%
   mutate(year = as.numeric(substring(year, 2)))
 
 ```
-## Question 1
+
+## Question 4
 
 ### Key Functions
 
@@ -216,7 +273,10 @@ for (level in poverty_levels) {
   poverty_measures<- bind_rows(poverty_measures, result)
 }
 
-poverty_measures
+poverty_measures %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
 
 ```
 
@@ -237,22 +297,12 @@ poverty_measures %>%
   theme(legend.position="bottom", legend.title=element_blank())
 
 ```
-## Question 2
 
-```{r}
-# Hello! Here's my attempt. I'm really not familiar enough with Lorenz curves at this point in time, I think the maths is right, as my gini co-efficients work out at the end
+## Question 5
 
-# But I know I am missing something with the 100 points
+Hello! Here's my attempt. I've never coded Lorenz curves before. Ithink the maths is right, as my Gini co-efficients work out at the end, but I know I am missing something with the 100 points. I don't think I understand the question well enough. I've got too many rows in my table, and I am assuming the 100 points line is intended to speed up the process. I'm presenting the computationally intensive code, then a sampling based code afterwards. 
 
-# I don't think I understand the question well enough (I've clearly got too many rows- I think the 100 points bit is meant to be faster computationally?)
-
-# is there like a "randomly sample 100 points in each year and then calculate the curves" idea here to speed it up?
-
-
-# code runs slow here because of the above
-
-# Please see attempt below.
-```
+Please see attempt below.
 
 ### Functions
 
@@ -276,7 +326,10 @@ lorenz
 
 ```{r}
 
-lorenz()
+lorenz() %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
 
 ```
 
@@ -298,12 +351,13 @@ lorenz() %>%
 
 
 ```
-## Question 2 (Alternative)
+## Question 5 (Alternative)
 
 ### Functions
 
+This is also not quite right, but shows code based on taking a random sample from the population to calculate the Lorenz curve.
+
 ```{r}
-# Using a sample of 100 points would be as follows, but I don't think this is what you are looking for
 
 set.seed=(123)
 
@@ -330,7 +384,11 @@ lorenz
 
 ```{r}
 
-lorenz_2()
+lorenz_2() %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
+
 
 ```
 
@@ -350,7 +408,7 @@ lorenz_2() %>%
 
 ```
 
-## Question 3 
+## Question 6
 
 ### Functions 
 
@@ -372,7 +430,11 @@ gini_coefficient
 
 ```{r}
 
-gini()
+gini() %>% 
+  head(10) %>% 
+  knitr::kable("html") %>%
+  kable_styling("striped", full_width = FALSE) 
+
 
 ```
 
