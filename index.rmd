@@ -188,7 +188,7 @@ outliers<-wdi %>%
          upper=mean+2.5*(sd),
          lower=mean-2.5*(sd),
          outlier=ifelse(value<=upper,
-                (ifelse(indicator<=lower,"outlier","inlier")),"outlier"))
+                (ifelse(value<=lower,"outlier","inlier")),"outlier"))
 outliers
 
 }
@@ -219,7 +219,11 @@ outliers() %>%
               colour="grey", alpha=0.3)+
   geom_point(aes(x=date,y=value,color=region))+
   geom_line(aes(x=date, y=mean))+
-  theme_minimal()
+  labs(x="Date",
+       y="Life Expectancy")+
+  theme_minimal()+
+  theme(legend.position="bottom", 
+        legend.title=element_blank())
 
 
 ```
@@ -341,8 +345,8 @@ lorenz() %>%
                 y = cum_income, 
                 group = year, 
                 color = as.factor(year))) +
-  labs(x="Cumulative Welfare",
-       y="Cumulative Population")+
+  labs(x="Cumulative Population",
+       y="Cumulative Welfare")+
   theme_minimal()+
   theme(legend.position=c(0.10,0.60), 
         legend.title=element_blank())
@@ -400,6 +404,8 @@ lorenz_2() %>%
                 y = cum_income, 
                 group = year, 
                 color = as.factor(year))) +
+  labs(x="Cumulative Population",
+       y="Cumulative Welfare")+
   theme_minimal()+
   theme(legend.position=c(0.10,0.60), 
         legend.title=element_blank())
@@ -441,9 +447,12 @@ gini() %>%
 ```{r}
 
 gini() %>% 
+  mutate(year = as.Date(paste0(year, "-01-01"))) %>% 
   ggplot(aes(x=year,y=gini))+
   geom_line()+
   geom_point()+
+  labs(x="Year",
+       y="Gini Co-efficient")+
   theme_minimal()
 
 ```

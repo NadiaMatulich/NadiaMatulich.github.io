@@ -526,7 +526,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">upper=</span>mean<span class="fl">+2.5</span><span class="sc">*</span>(sd),</span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower=</span>mean<span class="fl">-2.5</span><span class="sc">*</span>(sd),</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">outlier=</span><span class="fu">ifelse</span>(value<span class="sc">&lt;=</span>upper,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                (<span class="fu">ifelse</span>(indicator<span class="sc">&lt;=</span>lower,<span class="st">"outlier"</span>,<span class="st">"inlier"</span>)),<span class="st">"outlier"</span>))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                (<span class="fu">ifelse</span>(value<span class="sc">&lt;=</span>lower,<span class="st">"outlier"</span>,<span class="st">"inlier"</span>)),<span class="st">"outlier"</span>))</span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>outliers</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -709,7 +709,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">colour=</span><span class="st">"grey"</span>, <span class="at">alpha=</span><span class="fl">0.3</span>)<span class="sc">+</span></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>date,<span class="at">y=</span>value,<span class="at">color=</span>region))<span class="sc">+</span></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>date, <span class="at">y=</span>mean))<span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Date"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Life Expectancy"</span>)<span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>, </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
@@ -1017,8 +1021,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> cum_income, </span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">group =</span> year, </span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">as.factor</span>(year))) <span class="sc">+</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Cumulative Welfare"</span>,</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Cumulative Population"</span>)<span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Cumulative Population"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Cumulative Welfare"</span>)<span class="sc">+</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(<span class="fl">0.10</span>,<span class="fl">0.60</span>), </span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1080,84 +1084,84 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:right;"> 1.61063 </td>
-   <td style="text-align:right;"> 2 </td>
+   <td style="text-align:right;"> 2007 </td>
+   <td style="text-align:right;"> 0.93444 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00000 </td>
+   <td style="text-align:right;"> 0.00003 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2007 </td>
+   <td style="text-align:right;"> 0.96713 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> urban </td>
    <td style="text-align:right;"> 0.00001 </td>
    <td style="text-align:right;"> 0.00006 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 2006 </td>
-   <td style="text-align:right;"> 0.41736 </td>
-   <td style="text-align:right;"> 3 </td>
-   <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00001 </td>
-   <td style="text-align:right;"> 0.00009 </td>
-  </tr>
-  <tr>
    <td style="text-align:right;"> 2010 </td>
-   <td style="text-align:right;"> 2.80882 </td>
-   <td style="text-align:right;"> 4 </td>
-   <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00004 </td>
-   <td style="text-align:right;"> 0.00012 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:right;"> 1.02653 </td>
-   <td style="text-align:right;"> 4 </td>
-   <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00002 </td>
-   <td style="text-align:right;"> 0.00012 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:right;"> 1.61259 </td>
+   <td style="text-align:right;"> 2.80438 </td>
    <td style="text-align:right;"> 3 </td>
    <td style="text-align:left;"> urban </td>
    <td style="text-align:right;"> 0.00003 </td>
-   <td style="text-align:right;"> 0.00014 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2009 </td>
-   <td style="text-align:right;"> 2.27740 </td>
-   <td style="text-align:right;"> 6 </td>
-   <td style="text-align:left;"> rural </td>
-   <td style="text-align:right;"> 0.00006 </td>
-   <td style="text-align:right;"> 0.00017 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:right;"> 1.03780 </td>
-   <td style="text-align:right;"> 5 </td>
-   <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00005 </td>
-   <td style="text-align:right;"> 0.00028 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2010 </td>
-   <td style="text-align:right;"> 2.85150 </td>
-   <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00012 </td>
-   <td style="text-align:right;"> 0.00035 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 2009 </td>
-   <td style="text-align:right;"> 2.29151 </td>
-   <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> rural </td>
-   <td style="text-align:right;"> 0.00014 </td>
-   <td style="text-align:right;"> 0.00040 </td>
+   <td style="text-align:right;"> 0.00008 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:right;"> 1.68623 </td>
-   <td style="text-align:right;"> 9 </td>
+   <td style="text-align:right;"> 1.63671 </td>
+   <td style="text-align:right;"> 4 </td>
    <td style="text-align:left;"> urban </td>
-   <td style="text-align:right;"> 0.00008 </td>
-   <td style="text-align:right;"> 0.00040 </td>
+   <td style="text-align:right;"> 0.00003 </td>
+   <td style="text-align:right;"> 0.00012 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2006 </td>
+   <td style="text-align:right;"> 0.44210 </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00001 </td>
+   <td style="text-align:right;"> 0.00014 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2009 </td>
+   <td style="text-align:right;"> 2.26249 </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00006 </td>
+   <td style="text-align:right;"> 0.00015 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2007 </td>
+   <td style="text-align:right;"> 1.02552 </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00003 </td>
+   <td style="text-align:right;"> 0.00018 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2006 </td>
+   <td style="text-align:right;"> 0.44692 </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00003 </td>
+   <td style="text-align:right;"> 0.00029 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2009 </td>
+   <td style="text-align:right;"> 2.26404 </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> urban </td>
+   <td style="text-align:right;"> 0.00012 </td>
+   <td style="text-align:right;"> 0.00030 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2007 </td>
+   <td style="text-align:right;"> 1.04178 </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> rural </td>
+   <td style="text-align:right;"> 0.00005 </td>
+   <td style="text-align:right;"> 0.00033 </td>
   </tr>
 </tbody>
 </table>
@@ -1174,9 +1178,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> cum_income, </span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">group =</span> year, </span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="fu">as.factor</span>(year))) <span class="sc">+</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(<span class="fl">0.10</span>,<span class="fl">0.60</span>), </span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Cumulative Population"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Cumulative Welfare"</span>)<span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(<span class="fl">0.10</span>,<span class="fl">0.60</span>), </span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title=</span><span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
@@ -1270,10 +1276,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="graphing-results-3">Graphing Results</h3>
 <div class="cell" data-layout-align="left">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gini</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>year,<span class="at">y=</span>gini))<span class="sc">+</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.Date</span>(<span class="fu">paste0</span>(year, <span class="st">"-01-01"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>year,<span class="at">y=</span>gini))<span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Year"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Gini Co-efficient"</span>)<span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
