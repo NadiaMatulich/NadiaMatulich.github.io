@@ -3,17 +3,15 @@ title: "R Skills Assignment"
 author: "Nadia Matulich"
 format: html
 ---
+```{r}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.align="left", fig.pos="H", digits=2)
+```
 
 ```{r}
 
 library(tidyverse)
 library(knitr)
 library(kableExtra)
-library(DT)
-
-
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.align="left", fig.pos="H", digits=2)
-
 
 ```
 
